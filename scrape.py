@@ -15,6 +15,8 @@ USERNAME = os.getenv("USERNAME")
 EMAIL = os.getenv("USERNAME")
 PASSWORD = os.getenv("USERNAME")
 
+link = "https://x.com/Prof_Cheems/status/2026893332408852932/"
+
 client = Client(
     language="en-US",
     user_agent=(
@@ -170,7 +172,7 @@ def extract_tweet_id(url_or_id: str) -> str:
     if url_or_id.isdigit():
         return url_or_id
 
-    match = re.search(r"/status/(\d+)", url_or_id)
+    match = re.search(r"/status/(\d+)", url_or_id) 
     if match:
         return match.group(1)
 
@@ -180,7 +182,7 @@ def extract_tweet_id(url_or_id: str) -> str:
 
 async def main():
     await make_auth()
-    data =  extract_tweet_id("https://x.com/Prof_Cheems/status/2026893332408852932/")
+    data =  extract_tweet_id(link)
     await fetchImageById(data)
     # print(data)
     # await download_image(data,"img.jpg")
