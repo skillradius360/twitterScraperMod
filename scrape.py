@@ -3,6 +3,8 @@ from twikit import Client
 from dotenv import load_dotenv
 import os
 import aiohttp
+import re
+
 
 load_dotenv()
 
@@ -13,7 +15,6 @@ USERNAME = os.getenv("USERNAME")
 EMAIL = os.getenv("USERNAME")
 PASSWORD = os.getenv("USERNAME")
 
-# Create client with realistic browser user-agent
 client = Client(
     language="en-US",
     user_agent=(
@@ -137,8 +138,8 @@ async def fetchImageById(tid):
                     url = media.media_url
 
                     # Get highest quality version
-                    if "?format=" in url:
-                        url = url.split("?")[0] + "?name=orig"
+                    # if "?format=" in url:
+                    #     url = url.split("?")[0] + "?name=orig"
 
                     filepath = os.path.join(
                         DOWNLOAD_FOLDER,
@@ -162,23 +163,28 @@ async def fetchImageById(tid):
 
 
 
-# async def download_image(url: str, filepath: str):
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url) as response:
-            if response.status == 200:
-                with open(filepath, "wb") as f:
-                    f.write(await response.read())
-                print(f"Saved: {filepath}")
-            else:
-                print(f"Failed to download {url} (Status: {response.status})")
+def extract_tweet_id(url_or_id: str) -> str:
+
+    url_or_id = url_or_id.strip()
+
+    if url_or_id.isdigit():
+        return url_or_id
+
+    match = re.search(r"/status/(\d+)", url_or_id)
+    if match:
+        return match.group(1)
+
+    raise ValueError("Invalid tweet URL or ID")
+
 
 
 async def main():
     await make_auth()
-    # data = await fetchImageById("2026677657140867279")
+    data =  extract_tweet_id("https://x.com/Prof_Cheems/status/2026893332408852932/")
+    await fetchImageById(data)
     # print(data)
     # await download_image(data,"img.jpg")
-    await findComments()
+    # await findComments()
 
 
 asyncio.run(main())
